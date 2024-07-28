@@ -1,8 +1,8 @@
 package com.achrya.paypaychallenge.domain.repo
 
-import com.achrya.paypaychallenge.data.db.entity.CurrencyDetail
-import com.achrya.paypaychallenge.data.db.entity.CurrencyExchangeTable
+import com.achrya.paypaychallenge.data.mapper.CurrencyDetail
+import kotlinx.coroutines.flow.Flow
 
 interface CurrencyRemoteDataRepo {
-    suspend fun getCurrencyList(appId: String): CurrencyDetail
+    suspend fun getCurrencyList(appId: String): Flow<CurrencyDetail>
 }

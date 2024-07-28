@@ -1,33 +1,51 @@
 package com.achrya.paypaychallenge.domain.usecase
 
+import com.achrya.paypaychallenge.BuildConfig
 import com.achrya.paypaychallenge.domain.model.Currency
 import com.achrya.paypaychallenge.domain.repo.CurrencyPreferenceRepo
 import com.achrya.paypaychallenge.domain.repo.CurrencyRemoteDataRepo
 import com.achrya.paypaychallenge.domain.repo.CurrencyStorageDataRepo
-
-const val appId = "ab2e8fa5ed84431a89f99fcff5d12b50"
+import com.achrya.paypaychallenge.utils.NetworkResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class GetLatestCurrencyDetail(
     private val remoteData: CurrencyRemoteDataRepo,
     private val localDbData: CurrencyStorageDataRepo,
     private val sharedPref: CurrencyPreferenceRepo
 ) {
-
-    suspend operator fun invoke(): Currency {
-        if (isTimeExceed(sharedPref.getTimeStampAndBase().first)) {
-            val currDetail = remoteData.getCurrencyList(appId)
-            localDbData.insertAllCurrencyToDb(currDetail.allCurrencyExchange)
-            sharedPref.saveCurrentTimeStampAndBaseCurr(currDetail.base)
-        }
-        return Currency(
-            sharedPref.getTimeStampAndBase().first,
-            sharedPref.getTimeStampAndBase().second,
-            localDbData.getAllCurrenciesFromDB()
-        )
+    suspend operator fun invoke(): Flow<NetworkResult<Currency>> {
+        return flow {
+            emit(NetworkResult.Loading(true))
+            if (isTimeExceed(sharedPref.getTimeStampAndBase().first)) {
+                remoteData.getCurrencyList(BuildConfig.APP_ID).collect { currDetail ->
+                    localDbData.insertAllCurrencyToDb(currDetail.allCurrencyExchange)
+                    sharedPref.saveCurrentTimeStampAndBaseCurr(currDetail.base)
+                }
+            }
+            localDbData.getAllCurrenciesFromDB().collect { rates ->
+                emit(NetworkResult.Loading(false))
+                emit(
+                    NetworkResult.Success(
+                        Currency(
+                            sharedPref.getTimeStampAndBase().first,
+                            sharedPref.getTimeStampAndBase().second,
+                            rates
+                        )
+                    )
+                )
+            }
+        }.catch { ex ->
+            emit(NetworkResult.Loading(false))
+            emit(NetworkResult.Error(ex.message ?: "Something went wrong")) }
+            .flowOn(Dispatchers.IO)
     }
 
     private fun isTimeExceed(lastTime: Long): Boolean {
         val currTime = System.currentTimeMillis()
-        return (currTime - lastTime) >= 30 * 60 * 1000
+        return (currTime - lastTime) > 30 * 60 * 1000
     }
 }

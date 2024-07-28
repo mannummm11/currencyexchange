@@ -2,15 +2,14 @@ package com.achrya.paypaychallenge.data.di
 
 import com.achrya.paypaychallenge.data.mapper.CurrencyExchangeParse
 import com.achrya.paypaychallenge.data.network.CurrencyService
-import com.example.example.CurrencyEntity
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.flow.Flow
 import okhttp3.OkHttpClient
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-const val BASE_URL = "https://openexchangerates.org/api/"
 
 fun provideOkhttpClient() = OkHttpClient.Builder()
     .readTimeout(30, TimeUnit.SECONDS)
@@ -19,7 +18,7 @@ fun provideOkhttpClient() = OkHttpClient.Builder()
 
 fun provideCurrencyGsonConvertFactory() = GsonConverterFactory.create(
     GsonBuilder()
-        .registerTypeAdapter(CurrencyEntity::class.java, CurrencyExchangeParse())
+        .registerTypeAdapter(Flow::class.java, CurrencyExchangeParse())
         .create()
 )
 
@@ -29,7 +28,7 @@ fun provideRetrofitWithCurrencyGsonAdapter(
 ) = Retrofit.Builder()
     .addConverterFactory(gsonConverterFactory)
     .client(okHttpClient)
-    .baseUrl(BASE_URL)
+    .baseUrl(com.achrya.paypaychallenge.BuildConfig.BASE_API_URL)
     .build()
 
 fun provideCurrencyApiService(retrofit: Retrofit) = retrofit.create(CurrencyService::class.java)
