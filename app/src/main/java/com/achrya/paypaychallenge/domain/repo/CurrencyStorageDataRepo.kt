@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface CurrencyStorageDataRepo {
     suspend fun insertAllCurrencyToDb(currencies: List<CurrencyExchangeTable>)
-    suspend fun getAllCurrenciesFromDB(): Flow<List<Rate>>
+    suspend fun getAllCurrenciesFromDB(): Flow<List<CurrencyExchangeTable>>
 }

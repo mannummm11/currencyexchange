@@ -8,9 +8,5 @@ import kotlinx.coroutines.flow.flow
 class CurrencyRemoteDataRepoImpl(private val currencyService: CurrencyService) :
     CurrencyRemoteDataRepo {
     override suspend fun getCurrencyList(appId: String) =
-        flow {
-            currencyService.getCurrencyList(appId).collect { currEntity ->
-                emit(currEntity.toCurrencyExchangeTable())
-            }
-        }
+        currencyService.getCurrencyList(appId)
 }

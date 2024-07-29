@@ -1,6 +1,8 @@
 package com.achrya.paypaychallenge.domain.usecase
 
 import com.achrya.paypaychallenge.BuildConfig
+import com.achrya.paypaychallenge.data.mapper.toCurrencyExchangeTable
+import com.achrya.paypaychallenge.data.mapper.toDomainRate
 import com.achrya.paypaychallenge.domain.model.Currency
 import com.achrya.paypaychallenge.domain.repo.CurrencyPreferenceRepo
 import com.achrya.paypaychallenge.domain.repo.CurrencyRemoteDataRepo
@@ -21,9 +23,11 @@ class GetLatestCurrencyDetail(
         return flow {
             emit(NetworkResult.Loading(true))
             if (isTimeExceed(sharedPref.getTimeStampAndBase().first)) {
-                remoteData.getCurrencyList(BuildConfig.APP_ID).collect { currDetail ->
-                    localDbData.insertAllCurrencyToDb(currDetail.allCurrencyExchange)
-                    sharedPref.saveCurrentTimeStampAndBaseCurr(currDetail.base)
+                remoteData.getCurrencyList(BuildConfig.APP_ID).collect { currEntity ->
+                    currEntity.toCurrencyExchangeTable().let { currDetail ->
+                        localDbData.insertAllCurrencyToDb(currDetail.allCurrencyExchange)
+                        sharedPref.saveCurrentTimeStampAndBaseCurr(currDetail.base)
+                    }
                 }
             }
             localDbData.getAllCurrenciesFromDB().collect { rates ->
@@ -33,7 +37,7 @@ class GetLatestCurrencyDetail(
                         Currency(
                             sharedPref.getTimeStampAndBase().first,
                             sharedPref.getTimeStampAndBase().second,
-                            rates
+                            rates.map { it.toDomainRate() }
                         )
                     )
                 )

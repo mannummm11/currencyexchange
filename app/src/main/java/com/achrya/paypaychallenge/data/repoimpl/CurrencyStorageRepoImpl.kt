@@ -15,12 +15,10 @@ class CurrencyStorageRepoImpl(private val currencyDAO: CurrencyDAO) : CurrencySt
         currencyDAO.insertAllCurrency(currencies)
     }
 
-    override suspend fun getAllCurrenciesFromDB(): Flow<List<Rate>> {
+    override suspend fun getAllCurrenciesFromDB(): Flow<List<CurrencyExchangeTable>> {
         return flow {
             currencyDAO.getAllCurrency().collect { rates->
-                emit(rates.map {
-                    Rate(it.currency, it.exchangeRate)
-                })
+                emit(rates)
             }
         }
     }

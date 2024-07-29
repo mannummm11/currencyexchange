@@ -7,6 +7,14 @@ import com.achrya.paypaychallenge.domain.usecase.GetCalculatedCurrencyDetail
 import com.achrya.paypaychallenge.domain.usecase.GetLatestCurrencyDetail
 import com.achrya.paypaychallenge.utils.NetworkResult
 
+data class CurrencyUiState(
+    val amount: String = "1",
+    val baseCurr: String = "Select Currency",
+    val currDetail: List<Rate> = emptyList(),
+    val showProgressBar: Boolean = false,
+    val showError: Boolean = false
+)
+
 class CurrencyCalculatorViewModel(
     private val getLatestCurrencyDetail: GetLatestCurrencyDetail,
     private val getCalculatedCurrencyDetail: GetCalculatedCurrencyDetail
@@ -40,27 +48,31 @@ class CurrencyCalculatorViewModel(
     }
 
      suspend fun getCalculatedData(selectedCurr: Rate, rates: List<Rate>, amount: Float) {
-        getCalculatedCurrencyDetail(selectedCurr, amount, rates).collect { curr->
-            _currencyUiState.value = _currencyUiState.value.copy(
-                amount = amount.toString(),
-                baseCurr = curr.base ?: "",
-                currDetail = curr.rates ?: emptyList()
-            )
+        getCalculatedCurrencyDetail(selectedCurr, amount, rates).collect { networkResult->
+            when(networkResult) {
+                is NetworkResult.Loading -> {
+                    _currencyUiState.value = _currencyUiState.value.copy(
+                        showProgressBar = networkResult.isLoading
+                    )
+                }
+                is NetworkResult.Success -> {
+                    _currencyUiState.value = _currencyUiState.value.copy(
+                        amount = amount.toString(),
+                        baseCurr = networkResult.data?.base ?: "",
+                        currDetail = networkResult.data?.rates ?: emptyList()
+                    )
+                }
+                is NetworkResult.Error -> {
+                    _currencyUiState.value = _currencyUiState.value.copy(
+                        showError = true
+                    )
+                }
+            }
         }
     }
-
-
 
     fun updateAmountField(text: String) {
         _currencyUiState.value = _currencyUiState.value.copy(amount = text.ifEmpty { "0" })
     }
 
 }
-
-data class CurrencyUiState(
-    val amount: String = "1",
-    val baseCurr: String = "Select Currency",
-    val currDetail: List<Rate> = emptyList(),
-    val showProgressBar: Boolean = false,
-    val showError: Boolean = false
-)
