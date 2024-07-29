@@ -61,6 +61,7 @@ class CurrencyCalculatorViewModel(
                         baseCurr = networkResult.data?.base ?: "",
                         currDetail = networkResult.data?.rates ?: emptyList()
                     )
+                    getLatestCurrencyDetail.updateLatestDetailToDB()
                 }
                 is NetworkResult.Error -> {
                     _currencyUiState.value = _currencyUiState.value.copy(

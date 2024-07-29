@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
+const val TIME_LIMIT = 30 * 60 * 1000
 class GetLatestCurrencyDetail(
     private val remoteData: CurrencyRemoteDataRepo,
     private val localDbData: CurrencyStorageDataRepo,
@@ -48,8 +49,19 @@ class GetLatestCurrencyDetail(
             .flowOn(Dispatchers.IO)
     }
 
+    suspend fun updateLatestDetailToDB() {
+        if (isTimeExceed(sharedPref.getTimeStampAndBase().first)) {
+            remoteData.getCurrencyList(BuildConfig.APP_ID).collect { currEntity ->
+                currEntity.toCurrencyExchangeTable().let { currDetail ->
+                    localDbData.insertAllCurrencyToDb(currDetail.allCurrencyExchange)
+                    sharedPref.saveCurrentTimeStampAndBaseCurr(currDetail.base)
+                }
+            }
+        }
+    }
+
     private fun isTimeExceed(lastTime: Long): Boolean {
         val currTime = System.currentTimeMillis()
-        return (currTime - lastTime) > 30 * 60 * 1000
+        return (currTime - lastTime) > TIME_LIMIT
     }
 }

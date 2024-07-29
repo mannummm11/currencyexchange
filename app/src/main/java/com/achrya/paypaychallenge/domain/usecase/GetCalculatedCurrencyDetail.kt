@@ -19,11 +19,11 @@ class GetCalculatedCurrencyDetail {
             if(moneyUnit <= 0 || selectedCurrency.exchangeRate <= 0) {
                 throw IllegalArgumentException("Money unit should be greater than zero")
             }
+            if(rates.find { it.exchangeRate <= 0} != null) {
+                throw IllegalArgumentException("Exchange rate should be greater than zero")
+            }
             emit(NetworkResult.Loading(true))
             val updatedRates = rates.map { rate->
-                if(rate.exchangeRate <=0 ){
-                    throw IllegalArgumentException("Exchange rate should be greater than zero")
-                }
                 rate.copy(
                     exchangeRate = rate.exchangeRate * (moneyUnit/selectedCurrency.exchangeRate)
                 )

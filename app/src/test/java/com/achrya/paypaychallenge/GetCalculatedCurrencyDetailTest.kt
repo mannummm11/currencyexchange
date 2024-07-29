@@ -52,7 +52,6 @@ class GetCalculatedCurrencyDetailTest {
         // Act
         val result = getCalculatedCurrencyDetail.invoke(selectedCurrency, moneyUnit, rates).toList()
 
-        //val expectedCurrency = Currency(0, "USD", expectedRates)
         assertEquals(result[0].status, ApiStatus.LOADING)
         assertEquals(result[1].status, ApiStatus.ERROR)
         assertEquals(result[1].message, "Money unit should be greater than zero")
@@ -75,7 +74,6 @@ class GetCalculatedCurrencyDetailTest {
 
         //val expectedCurrency = Currency(0, "USD", expectedRates)
         assertEquals(result[0].status, ApiStatus.LOADING)
-        assertEquals(result[1].status, ApiStatus.LOADING)
-        assertEquals(result[2].message, "Exchange rate should be greater than zero")
+        assertEquals(result[1].message, "Exchange rate should be greater than zero")
     }
 }
