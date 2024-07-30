@@ -1,7 +1,6 @@
 package com.achrya.paypaychallenge.domain.repo
 
-import com.achrya.paypaychallenge.data.mapper.CurrencyDetail
-import com.example.example.CurrencyEntity
+import com.achrya.paypaychallenge.data.entity.CurrencyEntity
 import kotlinx.coroutines.flow.Flow
 
 interface CurrencyRemoteDataRepo {

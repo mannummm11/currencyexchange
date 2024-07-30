@@ -2,10 +2,9 @@ import com.achrya.paypaychallenge.data.entity.RateEntity
 import com.achrya.paypaychallenge.data.network.CurrencyService
 import com.achrya.paypaychallenge.data.repoimpl.CurrencyRemoteDataRepoImpl
 import com.achrya.paypaychallenge.domain.repo.CurrencyRemoteDataRepo
-import com.example.example.CurrencyEntity
+import com.achrya.paypaychallenge.data.entity.CurrencyEntity
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before

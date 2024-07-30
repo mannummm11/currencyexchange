@@ -8,11 +8,11 @@ import com.achrya.paypaychallenge.domain.usecase.GetLatestCurrencyDetail
 import com.achrya.paypaychallenge.utils.NetworkResult
 
 data class CurrencyUiState(
-    val amount: String = "1",
-    val baseCurr: String = "Select Currency",
-    val currDetail: List<Rate> = emptyList(),
-    val showProgressBar: Boolean = false,
-    val showError: Boolean = false
+    var amount: String = "1",
+    var baseCurr: String = "Select Currency",
+    var currDetail: List<Rate> = emptyList(),
+    var showProgressBar: Boolean = false,
+    var showError: Boolean = false
 )
 
 class CurrencyCalculatorViewModel(

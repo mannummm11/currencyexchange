@@ -1,7 +1,7 @@
 package com.achrya.paypaychallenge.data.mapper
 
 import com.achrya.paypaychallenge.data.entity.RateEntity
-import com.example.example.CurrencyEntity
+import com.achrya.paypaychallenge.data.entity.CurrencyEntity
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement

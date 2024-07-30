@@ -1,9 +1,8 @@
 package com.achrya.paypaychallenge.data.mapper
 
 import com.achrya.paypaychallenge.data.db.entity.CurrencyExchangeTable
-import com.achrya.paypaychallenge.domain.model.Currency
 import com.achrya.paypaychallenge.domain.model.Rate
-import com.example.example.CurrencyEntity
+import com.achrya.paypaychallenge.data.entity.CurrencyEntity
 
 fun CurrencyEntity.toCurrencyExchangeTable() =
     CurrencyDetail(this.base ?: "",

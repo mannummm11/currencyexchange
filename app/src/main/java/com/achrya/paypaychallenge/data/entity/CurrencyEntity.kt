@@ -1,7 +1,4 @@
-package com.example.example
-
-import com.achrya.paypaychallenge.data.entity.RateEntity
-
+package com.achrya.paypaychallenge.data.entity
 
 data class CurrencyEntity(
     var disclaimer: String? = null,

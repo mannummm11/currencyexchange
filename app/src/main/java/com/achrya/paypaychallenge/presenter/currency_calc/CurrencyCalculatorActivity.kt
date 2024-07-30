@@ -48,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -57,6 +58,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import com.achrya.paypaychallenge.domain.model.Rate
 import com.achrya.paypaychallenge.ui.theme.PaypaychallengeTheme
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -114,10 +116,7 @@ fun CurrencyExchangeUI() {
 
     val uiState = viewModel.currencyUiState
 
-    var amount = viewModel.currencyUiState.amount
     var expanded by remember { mutableStateOf(false) }
-    val options = viewModel.currencyUiState.currDetail
-    var selectedOption = viewModel.currencyUiState.baseCurr
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(modifier = Modifier.background(color = Color.LightGray)) {
@@ -128,7 +127,7 @@ fun CurrencyExchangeUI() {
                 .padding(horizontal = 16.dp)
         ) {
             OutlinedTextField(
-                value = amount,
+                value = uiState.amount,
                 onValueChange = { if (it.length <= 8) viewModel.updateAmountField(it.trim()) },
                 modifier = Modifier
                     .weight(1f)
@@ -142,13 +141,17 @@ fun CurrencyExchangeUI() {
 
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        if (amount.contains("-") || amount.contains(",") || amount.toFloat() <= 0) {
-                            amount = "1"
-                        }
+                        if (uiState.amount.let { it.contains("-") || it.contains(",") || it.toFloat() <= 0 }) uiState.amount =
+                            "1"
                         coroutineScope.launch(Dispatchers.IO) {
-                            val basRate = options.find { it.currency == selectedOption }
+                            val basRate =
+                                uiState.currDetail.find { it.currency == uiState.baseCurr }
                             basRate?.let {
-                                viewModel.getCalculatedData(it, options, amount.toFloat())
+                                viewModel.getCalculatedData(
+                                    it,
+                                    uiState.currDetail,
+                                    uiState.amount.toFloat()
+                                )
                             }
                         }
                         keyboardController?.hide()
@@ -159,7 +162,7 @@ fun CurrencyExchangeUI() {
             Box(modifier = Modifier.weight(1f)) {
                 Column {
                     OutlinedTextField(
-                        value = selectedOption,
+                        value = uiState.baseCurr,
                         onValueChange = {},
                         trailingIcon = {
                             Icon(
@@ -178,17 +181,17 @@ fun CurrencyExchangeUI() {
                         modifier = Modifier.fillMaxWidth(),
                         properties = PopupProperties()
                     ) {
-                        options.forEachIndexed { inx, option ->
+                        uiState.currDetail.forEachIndexed { inx, option ->
                             DropdownMenuItem(text = {
                                 Text(
                                     text = option.currency,
                                     style = TextStyle(fontSize = 20.sp)
                                 )
                             }, onClick = {
-                                selectedOption = option.currency
+                                uiState.baseCurr = option.currency
                                 expanded = false
                                 coroutineScope.launch(Dispatchers.IO) {
-                                    viewModel.getCalculatedData(option, options, 1f)
+                                    viewModel.getCalculatedData(option, uiState.currDetail, 1f)
                                 }
                             })
                         }
@@ -206,8 +209,8 @@ fun CurrencyExchangeUI() {
             columns = GridCells.Fixed(3),
             contentPadding = PaddingValues(5.dp)
         ) {
-            items(options.size) {
-                RoundedCardView(rate = options[it])
+            items(uiState.currDetail.size) {
+                RoundedCardView(rate = uiState.currDetail[it])
             }
         }
     }

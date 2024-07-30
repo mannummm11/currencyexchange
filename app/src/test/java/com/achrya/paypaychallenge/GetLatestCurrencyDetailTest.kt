@@ -10,12 +10,10 @@ import com.achrya.paypaychallenge.domain.repo.CurrencyStorageDataRepo
 import com.achrya.paypaychallenge.domain.usecase.GetLatestCurrencyDetail
 import com.achrya.paypaychallenge.utils.ApiStatus
 import com.achrya.paypaychallenge.utils.NetworkResult
-import com.example.example.CurrencyEntity
-import kotlinx.coroutines.Dispatchers
+import com.achrya.paypaychallenge.data.entity.CurrencyEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
