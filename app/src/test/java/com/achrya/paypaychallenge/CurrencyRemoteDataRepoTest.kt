@@ -29,7 +29,7 @@ class CurrencyRemoteDataRepoTest {
     }
 
     @Test
-    fun getCurrencyList_returnsCorrectValues() = runTest {
+    fun `fetch currency detail and exchnage list from reote test`() = runTest {
         val appId = "testAppId"
         val currencyEntity = CurrencyEntity("disclaimer", "license", 100, "base",
         listOf(RateEntity("USD", 1.0f), RateEntity("EUR", 2.0f))

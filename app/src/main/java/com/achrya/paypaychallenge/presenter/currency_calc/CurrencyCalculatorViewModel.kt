@@ -9,7 +9,7 @@ import com.achrya.paypaychallenge.utils.NetworkResult
 
 data class CurrencyUiState(
     var amount: String = "1",
-    var baseCurr: String = "Select Currency",
+    //var baseCurr: String = "Select Currency",
     var currDetail: List<Rate> = emptyList(),
     var showProgressBar: Boolean = false,
     var showError: Boolean = false
@@ -33,7 +33,7 @@ class CurrencyCalculatorViewModel(
                 is NetworkResult.Success -> {
                     _currencyUiState.value = _currencyUiState.value.copy(
                         amount = "1",
-                        baseCurr = networkRes._data?.base ?: "Select Currency",
+                        //baseCurr = networkRes._data?.base ?: "Select Currency",
                         currDetail = networkRes._data?.rates ?: emptyList(),
                         showProgressBar = false, showError = false
                     )
@@ -58,7 +58,7 @@ class CurrencyCalculatorViewModel(
                 is NetworkResult.Success -> {
                     _currencyUiState.value = _currencyUiState.value.copy(
                         amount = amount.toString(),
-                        baseCurr = networkResult.data?.base ?: "",
+                        //baseCurr = networkResult.data?.base ?: "",
                         currDetail = networkResult.data?.rates ?: emptyList()
                     )
                     getLatestCurrencyDetail.updateLatestDetailToDB()

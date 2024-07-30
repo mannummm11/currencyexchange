@@ -32,7 +32,7 @@ class CurrencyPreferenceRepoTest {
     }
 
     @Test
-    fun saveCurrentTimeStampAndBaseCurr_savesCorrectly() = runTest {
+    fun `saveCurrentTimeStampAndBaseCurrToPrefrencesCorrectly test`() = runTest {
         val baseCurr = "USD"
 
         currencyPreferenceRepo.saveCurrentTimeStampAndBaseCurr(baseCurr, 100)
@@ -44,7 +44,7 @@ class CurrencyPreferenceRepoTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getTimeStampAndBase_returnsCorrectValues() = runBlockingTest {
+    fun `get time stamp and base from prefrences test`() = runTest {
         Mockito.`when`(sharedPreferences.getLong(Mockito.anyString(), Mockito.anyLong())).thenReturn(0L)
         Mockito.`when`(sharedPreferences.getString(Mockito.anyString(), Mockito.anyString())).thenReturn("USD")
 

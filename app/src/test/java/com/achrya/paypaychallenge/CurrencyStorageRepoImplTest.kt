@@ -34,7 +34,7 @@ class CurrencyStorageRepoImplTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun insertAllCurrencyToDb_insertsCorrectly() = runTest {
+        fun `insert all data to database test`() = runTest {
         val currencies = listOf(
             CurrencyExchangeTable("USD", 1.0f),
             CurrencyExchangeTable("EUR", 0.85f)
@@ -46,7 +46,7 @@ class CurrencyStorageRepoImplTest {
     }
 
     @Test
-    fun getAllCurrenciesFromDB_returnsCorrectCurrencies() = runBlocking {
+    fun `get all exchange data from database test`() = runBlocking {
         val currencies = listOf(
             CurrencyExchangeTable("USD", 1.0f),
             CurrencyExchangeTable("EUR", 0.85f)

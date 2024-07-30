@@ -43,7 +43,6 @@ class CurrencyCalculatorViewModelTest {
         // Assert
         val expectedUiState = CurrencyUiState(
             amount = "1",
-            baseCurr = "USD",
             currDetail = listOf(Rate("EUR", 0.85f)),
             showProgressBar = false,
             showError = false
@@ -98,7 +97,6 @@ class CurrencyCalculatorViewModelTest {
         // Assert
         val expectedUiState = CurrencyUiState(
             amount = "100.0",
-            baseCurr = "USD",
             currDetail = listOf(Rate("EUR", 85f)),
             showProgressBar = false,
             showError = false
