@@ -8,13 +8,14 @@ import com.achrya.paypaychallenge.domain.repo.CurrencyPreferenceRepo
 import com.achrya.paypaychallenge.domain.repo.CurrencyRemoteDataRepo
 import com.achrya.paypaychallenge.domain.repo.CurrencyStorageDataRepo
 import com.achrya.paypaychallenge.utils.NetworkResult
+import com.achrya.paypaychallenge.utils.TIME_LIMIT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
-const val TIME_LIMIT = 30 * 60 * 1000
+
 class GetLatestCurrencyDetail(
     private val remoteData: CurrencyRemoteDataRepo,
     private val localDbData: CurrencyStorageDataRepo,
