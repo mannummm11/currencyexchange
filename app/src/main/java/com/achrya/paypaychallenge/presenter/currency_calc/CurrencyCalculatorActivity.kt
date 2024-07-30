@@ -4,11 +4,15 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -62,6 +66,7 @@ import com.achrya.paypaychallenge.domain.model.Rate
 import com.achrya.paypaychallenge.ui.theme.PaypaychallengeTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -93,7 +98,7 @@ class MainActivity : ComponentActivity() {
         var isVisibility by remember { mutableStateOf(false) }
         DisposableEffect(key1 = navController.currentBackStackEntry) {
             val callback = NavController.OnDestinationChangedListener { _, destination, _ ->
-                if(destination.route == "CurrencyExchangeUI" && !isVisibility) {
+                if (destination.route == "CurrencyExchangeUI" && !isVisibility) {
                     coroutineScope.launch {
                         isVisibility = true
                         viewModel.getRefreshData()
@@ -228,18 +233,40 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun CurrencySelectorView(viewModel: CurrencyCalculatorViewModel, onItemSelected: (Rate) -> Unit) {
+    fun CurrencySelectorView(
+        viewModel: CurrencyCalculatorViewModel,
+        onItemSelected: (Rate) -> Unit
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.LightGray), contentAlignment = Alignment.Center
+        ) {
+            LazyColumn(userScrollEnabled = true, modifier = Modifier.fillMaxWidth().padding(4.dp)) {
+                items(viewModel.currencyUiState.currDetail.size) { item ->
+                    Card(
+                        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .height(IntrinsicSize.Min)
+                            .align(Alignment.Center)
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.Cyan
+                        )
+                    ) {
+                        Text(
+                            text = viewModel.currencyUiState.currDetail[item].currency,
+                            modifier = Modifier
+                                .clickable { onItemSelected(viewModel.currencyUiState.currDetail[item]) }
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                            style = TextStyle(color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        )
+                    }
+                }
 
-        LazyColumn(userScrollEnabled = true, modifier = Modifier.fillMaxWidth()) {
-            items(viewModel.currencyUiState.currDetail.size) { item ->
-                Text(
-                    text = viewModel.currencyUiState.currDetail[item].currency,
-                    modifier = Modifier
-                        .clickable { onItemSelected(viewModel.currencyUiState.currDetail[item]) }
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    style = TextStyle(fontSize = 30.sp, fontWeight = FontWeight.Bold)
-                )
+
             }
         }
     }
@@ -302,6 +329,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 const val CONNECTIVITY_HEADER = "Connectivity Issue"
 const val CONNECTIVITY_MSG = "Please check internet connection."
 const val OK = "OK"
